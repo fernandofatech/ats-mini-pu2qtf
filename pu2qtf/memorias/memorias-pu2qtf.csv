@@ -1,0 +1,97 @@
+slot,freq_hz,mode,name,estacao,categoria
+1,76700000,FM,ClassPan,Classic Pan (Jovem Pan),otimo
+2,77100000,FM,Record,Radio Record,otimo
+3,79500000,FM,Radio SP,Radio Sao Paulo,bom
+4,81900000,FM,ABC,Radio ABC (Santo Andre),otimo
+5,84300000,FM,BoaVontad,Super Rede Boa Vontade,otimo
+6,85900000,FM,CancaoNov,Radio Cancao Nova SP,otimo
+7,86300000,FM,Radio863,Radio 86.3 FM,otimo
+8,86500000,FM,FM 86.5?,Nao identificada (sinal forte na varredura),otimo
+9,87100000,FM,Nacional,Radio Nacional SP (EBC),bom
+10,88100000,FM,Gazeta,Gazeta FM,otimo
+11,89100000,FM,89Rock,89 FM A Radio Rock,otimo
+12,89700000,FM,NovaBras,Novabrasil FM,otimo
+13,90100000,FM,Gospel,Radio Gospel FM (Jundiai/Serra do Japi),bom
+14,90500000,FM,CBN SP,CBN Sao Paulo,otimo
+15,90900000,FM,VIP FM,VIP FM (Sao Bernardo do Campo),bom
+16,91300000,FM,Disney,Radio Disney,bom
+17,93300000,FM,SuperR933,Super Radio (Maua/Santos),bom
+18,94100000,FM,Atual FM,Radio Atual FM,bom
+19,94700000,FM,Antena1,Antena 1 SP,otimo
+20,95300000,FM,Nativa,Nativa FM,otimo
+21,95700000,FM,VibeMund,Radio Vibe Mundial (Jundiai),bom
+22,96100000,FM,Band FM,Band FM,otimo
+23,96500000,FM,Z FM,Radio Z FM,otimo
+24,96900000,FM,BandNews,BandNews FM,otimo
+25,97300000,FM,DeusAmor,Radio Deus e Amor (Mairipora),otimo
+26,97700000,FM,Energia97,Energia 97 FM,otimo
+27,98500000,FM,Metropol,Metropolitana FM,otimo
+28,98900000,FM,BrDeFato,Radio Brasil de Fato (Mogi das Cruzes),bom
+29,99500000,FM,Aleluia,Rede Aleluia,otimo
+30,100100000,FM,TMC,TMC (ex-Transamerica SP),otimo
+31,100900000,FM,JovemPan,Jovem Pan FM,bom
+32,101700000,FM,Alpha FM,Alpha FM,bom
+33,102100000,FM,Top FM,Top FM (Aruja),bom
+34,103300000,FM,CulturaFM,Radio Cultura FM,otimo
+35,103700000,FM,HitsFM,103.7 Hits FM (Cubatao/Santo Andre),otimo
+36,104700000,FM,Transcont,Transcontinental FM,bom
+37,105700000,FM,Forbes,Forbes Radio,bom
+38,106300000,FM,Mix FM,Radio Mix FM,otimo
+39,107300000,FM,Bandeirnt,Radio Bandeirantes,otimo
+40,107900000,FM,Eldorado,Radio Eldorado (Porto),otimo
+41,700000,AM,NossaRad,Nossa Radio (Sao Caetano do Sul),bom
+42,740000,AM,Trianon,Radio Trianon,fraco de dia (melhor a noite/antena externa)
+43,820000,AM,Aparecida,Radio Aparecida (Aparecida SP),fraco de dia (melhor a noite/antena externa)
+44,920000,AM,AM920,AM 920 (Cotia),fraco de dia (melhor a noite/antena externa)
+45,980000,AM,NacBSB,Radio Nacional Brasilia (EBC),fraco de dia (melhor a noite/antena externa)
+46,1040000,AM,CapitalAM,Radio Capital (Diadema),razoavel
+47,1070000,AM,Metr1070,Radio Metropolitana (Mogi das Cruzes),fraco de dia (melhor a noite/antena externa)
+48,1130000,AM,NacRio,Radio Nacional Rio (EBC),fraco de dia (melhor a noite/antena externa)
+49,1200000,AM,CultBrAM,Radio Cultura Brasil AM,fraco de dia (melhor a noite/antena externa)
+50,1300000,AM,DeusAmrAM,Radio Deus e Amor AM,razoavel
+51,1490000,AM,Imaculada,Radio Imaculada (Santo Andre),bom
+52,1570000,AM,AM 1570?,Nao identificada (sinal forte na varredura),bom
+53,1600000,AM,9Julho,Radio 9 de Julho,fraco de dia (melhor a noite/antena externa)
+54,5035000,AM,EduRural,Radio Educacao Rural (Coari AM),nao medido (ondas curtas)
+55,5940000,AM,VozMiss,Radio Voz Missionaria (Camboriu SC),nao medido (ondas curtas)
+56,6010000,AM,Inconfid,Radio Inconfidencia (Belo Horizonte),nao medido (ondas curtas)
+57,6050000,AM,HCJB,HCJB Voz de los Andes (Ecuador),nao medido (ondas curtas)
+58,6180000,AM,NacAmz49,Radio Nacional da Amazonia (Brasilia),nao medido (ondas curtas)
+59,9455000,AM,WRMI9455,WRMI Radio Miami Int.,nao medido (ondas curtas)
+60,9630000,AM,AparecSW,Radio Aparecida SW,nao medido (ondas curtas)
+61,9685000,AM,CRI Port,China Radio International,nao medido (ondas curtas)
+62,9765000,AM,PalAlegre,MWV Palavra Alegre (Madagascar),nao medido (ondas curtas)
+63,9955000,AM,WRMI9955,WRMI Radio Miami Int.,nao medido (ondas curtas)
+64,11750000,AM,VozMiss25,Radio Voz Missionaria (Camboriu SC),nao medido (ondas curtas)
+65,11760000,AM,HabanaCub,Radio Habana Cuba,nao medido (ondas curtas)
+66,11780000,AM,NacAmaz,Radio Nacional da Amazonia (Brasilia),nao medido (ondas curtas)
+67,11795000,AM,KBS World,KBS World Radio (Korea),nao medido (ondas curtas)
+68,11815000,AM,BrCentral,Radio Brasil Central (Goiania),nao medido (ondas curtas)
+69,15190000,AM,Inconf19,Radio Inconfidencia (Belo Horizonte),nao medido (ondas curtas)
+70,17715000,AM,ExtEspana,Radio Exterior de Espana (Noblejas),nao medido (ondas curtas)
+71,3530000,LSB,CW 80m,Telegrafia 80 m,radioamador
+72,3573000,USB,FT8 80m,FT8 80 m (digital),radioamador
+73,3700000,LSB,SSB 80m,Fonia 80 m (rodadas BR a noite),radioamador
+74,7020000,LSB,CW 40m,Telegrafia 40 m,radioamador
+75,7050000,LSB,SSB 7050,Fonia 40 m (rodadas BR),radioamador
+76,7074000,USB,FT8 40m,FT8 40 m (digital),radioamador
+77,7090000,LSB,SSB 7090,Fonia 40 m,radioamador
+78,10110000,USB,CW 30m,Telegrafia 30 m,radioamador
+79,10136000,USB,FT8 30m,FT8 30 m (digital),radioamador
+80,14025000,USB,CW 20m,Telegrafia 20 m,radioamador
+81,14074000,USB,FT8 20m,FT8 20 m (digital),radioamador
+82,14100000,USB,Beacon20,Beacons NCDXF/IARU 20 m,radioamador
+83,14200000,USB,SSB DX20,Fonia DX 20 m,radioamador
+84,14230000,USB,SSTV 20m,SSTV 20 m,radioamador
+85,18100000,USB,FT8 17m,FT8 17 m (digital),radioamador
+86,18110000,USB,Beacon17,Beacons NCDXF/IARU 17 m,radioamador
+87,21074000,USB,FT8 15m,FT8 15 m (digital),radioamador
+88,21150000,USB,Beacon15,Beacons NCDXF/IARU 15 m,radioamador
+89,21300000,USB,SSB 15m,Fonia 15 m,radioamador
+90,24915000,USB,FT8 12m,FT8 12 m (digital),radioamador
+91,24930000,USB,Beacon12,Beacons NCDXF/IARU 12 m,radioamador
+92,28074000,USB,FT8 10m,FT8 10 m (digital),radioamador
+93,28200000,USB,Beacon10,Beacons NCDXF/IARU 10 m,radioamador
+94,28400000,USB,SSB 10m,Fonia 10 m (liberado classe C),radioamador
+95,10000000,AM,WWV 10M,Sinal horario WWV/Observatorio Nacional 10 MHz,radioamador
+96,15000000,AM,WWV 15M,Sinal horario WWV/WWVH 15 MHz,radioamador

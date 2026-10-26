@@ -153,6 +153,7 @@ The receiver can download the [EiBi](http://eibispace.de/dx/eibi.txt) shortwave 
 * To display scheduled stations correctly, the receiver’s clock must be set. You can set the UTC date/time from the Settings menu or the configuration web page, or configure a Wi-Fi internet connection and use Sync Only mode for NTP synchronization. The UTC offset setting doesn’t affect the schedule. A less reliable alternative is to use RDS CT, but this requires finding a station that broadcasts UTC time (not local time).
 * Once set up, the receiver will display station names currently broadcasting on specific frequencies (only scheduled times are considered; days of the week are ignored for now).
 * You can quickly jump between stations using the Seek mode (marked by a clock icon). To switch between modes, short press the encoder while in Seek mode.
+* On the NCDXF/IARU beacon frequencies (14100, 18110, 21150, 24930 and 28200 kHz) the receiver shows the beacon transmitting right now, based on the UTC clock. No schedule download is needed.
 
 ## Reset
 

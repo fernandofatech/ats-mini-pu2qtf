@@ -7,6 +7,8 @@
 #include "Storage.h"
 #include "Remote.h"
 #include "ParserAdhoc.h"
+#include "Intro.h"
+#include "EIBI.h"
 
 static RemoteState remoteSerialState;
 static bool serialDisconnectPending = false;
@@ -118,6 +120,12 @@ static void remoteCaptureScreen(Stream* stream, bool binary)
   }, binary)) return;
   // HWCDC flush() can discard pending output on a false disconnect.
   if(stream != &Serial) stream->flush();
+}
+
+// Binary screenshot to the USB serial port, usable while setup() still runs
+void remoteCaptureToSerial()
+{
+  remoteCaptureScreen(&Serial, true);
 }
 
 bool remoteCaptureBmp(uint8_t *bmp)
@@ -304,6 +312,20 @@ static bool remoteExecuteCommand(Stream* stream, RemoteState* state, const Adhoc
       state->remoteLogOn = false;
       remoteCaptureScreen(stream, command.id == Id::CaptureScreenBinary);
       return false;
+    case Id::GetInfo:
+      stream->printf("Clock: %s UTC\r\n", clockAvailable() ? "set" : "NOT set");
+      stream->printf("EiBi: %s, %u bytes (%u entries)\r\n", eibiAvailable() ? "loaded" : "NOT loaded",
+                     eibiFileSize(), eibiFileSize() / sizeof(StationSchedule));
+      stream->printf("Last EiBi load: %s\r\n", eibiLastResult());
+      return false;
+    case Id::LoadEibi:
+      stream->println("Loading EiBi schedule...");
+      eibiLoadSchedule();
+      stream->printf("EiBi load: %s\r\n", eibiLastResult());
+      return true;
+    case Id::PlayIntro:
+      introPlay();
+      return true;
     case Id::ToggleLog:
       state->remoteLogOn = !state->remoteLogOn;
       return false;

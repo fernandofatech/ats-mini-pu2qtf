@@ -38,6 +38,9 @@ struct AdhocCommand {
     SetTheme,
     GetTheme,
     SetFrequency,
+    PlayIntro,
+    GetInfo,
+    LoadEibi,
   };
 
   static constexpr size_t BAND_LEN = 8;

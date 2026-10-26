@@ -73,6 +73,14 @@ bool eibiAvailable()
   return(LittleFS.exists(EIBI_PATH));
 }
 
+size_t eibiFileSize()
+{
+  File file = LittleFS.open(EIBI_PATH, "r");
+  size_t size = file ? file.size() : 0;
+  if(file) file.close();
+  return(size);
+}
+
 static bool entryIsNow(const StationSchedule *entry, int now)
 {
   // Check if entry applies to all hours
@@ -386,6 +394,14 @@ static bool eibiParseLine(const char *line, StationSchedule &entry)
   return(true);
 }
 
+// Outcome of the last eibiLoadSchedule() call, for the remote 'J' command
+static char eibiResult[96] = "not attempted";
+
+const char *eibiLastResult()
+{
+  return(eibiResult);
+}
+
 bool eibiLoadSchedule()
 {
   static const char *eibiMessage = "Loading EiBi Schedule";
@@ -394,7 +410,10 @@ bool eibiLoadSchedule()
   // Need to be connected to the network
   consumeAbortPending();
   if(getWiFiStatus() < 2)
+  {
+    sprintf(eibiResult, "no internet Wi-Fi connection (status %d)", getWiFiStatus());
     return(false);
+  }
 
   statusShow(eibiMessage, "Connecting...", 0);
   drawScreen();
@@ -402,8 +421,10 @@ bool eibiLoadSchedule()
   // Open HTTP connection to EiBi site
   http.setUserAgent(getUserAgent());
   http.begin(EIBI_URL);
-  if(http.GET() != HTTP_CODE_OK)
+  int httpCode = http.GET();
+  if(httpCode != HTTP_CODE_OK)
   {
+    sprintf(eibiResult, "HTTP error %d", httpCode);
     statusShow(eibiMessage, "Failed connecting to EiBi!");
     http.end();
     return(false);
@@ -413,6 +434,7 @@ bool eibiLoadSchedule()
   fs::File file = LittleFS.open(TEMP_PATH, "wb");
   if(!file)
   {
+    strcpy(eibiResult, "cannot open local storage");
     statusShow(eibiMessage, "Failed opening local storage!");
     http.end();
     return(false);
@@ -431,6 +453,7 @@ bool eibiLoadSchedule()
       file.close();
       http.end();
       LittleFS.remove(TEMP_PATH);
+      strcpy(eibiResult, "canceled");
       statusShow(eibiMessage, "CANCELED!");
       return(false);
     }
@@ -492,6 +515,7 @@ bool eibiLoadSchedule()
   LittleFS.rename(TEMP_PATH, EIBI_PATH);
 
   // Success
+  sprintf(eibiResult, "OK: %d of %d bytes, %d entries", byteCnt, totalLen, lineCnt);
   identifyFrequency(currentFrequency);
   statusShow(eibiMessage, "DONE!");
   return(true);

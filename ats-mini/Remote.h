@@ -29,4 +29,6 @@ bool remoteConsumeAbortPending(RemoteState* state, RemoteReadInput readInput);
 bool serialLoop(uint8_t usbMode);
 bool serialConsumeAbortPending(uint8_t usbMode);
 
+void remoteCaptureToSerial();
+
 #endif

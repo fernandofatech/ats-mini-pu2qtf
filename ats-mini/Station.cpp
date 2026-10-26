@@ -70,6 +70,8 @@ static char bufRadioText[100]   = "";
 static char bufProgramInfo[100] = "";
 static uint16_t piCode = 0x0000;
 
+static const char *findBeaconByFreq(uint32_t freq);
+
 const char *getStationName()
 {
   if(switchThemeEditor())
@@ -78,6 +80,8 @@ const char *getStationName()
   const char *station = currentMode!=FM || (getRDSMode() & RDS_PS)? bufStationName : "";
   // Live FM identification takes precedence over a saved name.
   if(currentMode==FM && station[strspn(station, " ")]) return(station);
+  // So does the beacon transmitting right now on a NCDXF frequency
+  if(findBeaconByFreq(currentFrequency)) return(station);
 
   static char memoryName[10];
   if(findMemoryName(currentFrequency, currentMode, bandIdx, memoryIdx, memoryName))
@@ -290,6 +294,39 @@ static const char *findNameByFreq(uint32_t freq, const NamedFreq *db, uint16_t d
   return(0);
 }
 
+//
+// NCDXF/IARU International Beacon Project: 18 beacons take turns every 10 s
+// in a 3 minute cycle synchronized to UTC, moving one band up each slot.
+// https://www.ncdxf.org/beacon/
+//
+static const char *findBeaconByFreq(uint32_t freq)
+{
+  static const uint16_t beaconFreqs[] = { 14100, 18110, 21150, 24930, 28200 };
+  static const char *beacons[] = {
+    "4U1UN New York", "VE8AT Nunavut", "W6WX California", "KH6RS Hawaii",
+    "ZL6B New Zealand", "VK6RBP Australia", "JA2IGY Japan", "RR9O Siberia",
+    "VR2B Hong Kong", "4S7B Sri Lanka", "ZS6DN South Africa", "5Z4B Kenya",
+    "4X6TU Israel", "OH2B Finland", "CS3B Madeira", "LU4AA Buenos Aires",
+    "OA4B Lima", "YV5B Caracas"
+  };
+  static char text[40];
+
+  if(currentMode==FM || !clockAvailable()) return(0);
+
+  for(uint8_t band = 0 ; band < ITEM_COUNT(beaconFreqs) ; band++)
+  {
+    // Allow 1 kHz either way so a slightly detuned CW note still matches
+    int32_t delta = (int32_t)(freq / 1000) - beaconFreqs[band];
+    if(delta < -1 || delta > 1) continue;
+
+    uint32_t slot = (time(NULL) % 180) / 10;
+    uint8_t idx = (slot + ITEM_COUNT(beacons) - band) % ITEM_COUNT(beacons);
+    sprintf(text, "Beacon %s", beacons[idx]);
+    return(text);
+  }
+  return(0);
+}
+
 static const char *findScheduleByFreq(uint16_t freq, bool periodic)
 {
   uint8_t hour, minute;
@@ -345,6 +382,10 @@ bool identifyFrequency(uint32_t freq, bool periodic)
   if(periodic && last_freq==freq && name_found) return(false);
   last_freq = freq;
   name_found = false;
+
+  // Beacons rotate every 10 s, so keep re-identifying them periodically
+  name = findBeaconByFreq(freq);
+  if(name) return(showStationName(name, true));
 
   // For non-periodic calls the name will be found earlier
   if(!periodic)

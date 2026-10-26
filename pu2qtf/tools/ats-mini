@@ -1,0 +1,404 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["pyserial>=3.5"]
+# ///
+"""ats-mini — controla o receptor ATS-Mini (ESP32-SI4732) pela porta USB.
+
+Pré-requisito no rádio: Settings -> USB Port -> Ad hoc.
+
+Uso:
+  ats-mini status                      mostra frequência, banda, RSSI/SNR, bateria
+  ats-mini monitor                     status ao vivo (Ctrl+C para sair)
+  ats-mini tune 89.1 | 840k | 6135k    sintoniza (MHz, ou kHz com sufixo k)
+  ats-mini tune 14100k usb             sintoniza numa banda de radioamador (lsb/usb)
+  ats-mini mem-dump [arquivo.csv]      exporta as 99 memórias
+  ats-mini mem-load arquivo.csv        grava memórias (colunas: slot,band,freq_hz,mode,name)
+  ats-mini mem-clear                   apaga todas as memórias
+  ats-mini scan-fm [saida.csv]         varre o FM (76.1–107.9) e mede cada canal
+  ats-mini scan-am [saida.csv]         varre o AM/OM (530–1700 kHz, passo 10 kHz)
+  ats-mini scan-sw [saida.csv]         varre as faixas de radiodifusão em ondas curtas (passo 5 kHz)
+  ats-mini scan INICIO FIM PASSO [saida.csv]
+                                       varre qualquer faixa em AM (ex.: scan 3000k 3500k 5k)
+  ats-mini intro                       toca de novo a abertura PU2QTF (firmware personalizado)
+  ats-mini info                        relógio e status da programação EiBi (firmware personalizado)
+  ats-mini eibi                        baixa a programação EiBi pelo Wi-Fi (firmware personalizado)
+  ats-mini screenshot [saida.bmp]      captura a tela do rádio
+  ats-mini send TEXTO                  envia comandos brutos (ex.: "VVV" = volume +3)
+
+Variáveis: ATS_MINI_PORT (padrão: primeira /dev/cu.usbmodem*).
+"""
+import csv
+import glob
+import os
+import sys
+import time
+
+import serial
+
+# (nome, início kHz, fim kHz, modo) — tabela de bandas do firmware
+BANDS = [
+    ("VHF", 64000, 108000, "FM"), ("ALL", 150, 30000, "AM"),
+    ("11M", 25600, 26100, "AM"), ("13M", 21500, 21900, "AM"),
+    ("15M", 18900, 19100, "AM"), ("16M", 17400, 18100, "AM"),
+    ("19M", 15100, 15900, "AM"), ("22M", 13500, 13900, "AM"),
+    ("25M", 11000, 13000, "AM"), ("31M", 9000, 11000, "AM"),
+    ("41M", 7000, 9000, "AM"), ("49M", 5000, 7000, "AM"),
+    ("60M", 4000, 5100, "AM"), ("75M", 3500, 4000, "AM"),
+    ("90M", 3000, 3500, "AM"), ("MW3", 1700, 3500, "AM"),
+    ("MW2", 495, 1701, "AM"), ("MW1", 150, 1800, "AM"),
+    # radioamador (SSB); o nome 15M se repete, o firmware desempata pela frequência
+    ("160M", 1800, 2000, "LSB"), ("80M", 3500, 4000, "LSB"),
+    ("40M", 7000, 7300, "LSB"), ("30M", 10000, 10200, "LSB"),
+    ("20M", 14000, 14400, "USB"), ("17M", 18000, 18200, "USB"),
+    ("15M", 21000, 21500, "USB"), ("12M", 24800, 25000, "USB"),
+    ("10M", 28000, 29700, "USB"),
+]
+BAND_NAMES = {b[0] for b in BANDS}
+SSB = ("LSB", "USB")
+
+
+def band_for(khz, mode=None):
+    """Banda mais específica (menor faixa) que contém a frequência.
+
+    Em LSB/USB prefere as bandas de radioamador; senão só usa as de AM/FM.
+    """
+    cands = [b for b in BANDS if b[1] <= khz <= b[2] and (b[3] in SSB) == (mode in SSB)]
+    if not cands and mode in SSB:
+        cands = [b for b in BANDS if b[1] <= khz <= b[2] and b[3] == "AM"]
+    if not cands:
+        sys.exit(f"Frequência fora das bandas do rádio: {khz} kHz")
+    return min(cands, key=lambda b: b[2] - b[1])
+
+
+def parse_freq(text):
+    """'89.1' -> Hz (MHz); '840k' / '6135k' -> Hz (kHz); inteiro grande -> Hz."""
+    t = text.strip().lower()
+    if t.endswith("k"):
+        return int(round(float(t[:-1]) * 1_000))
+    v = float(t)
+    if v < 200:
+        return int(round(v * 1_000_000))
+    return int(v)
+
+
+class Radio:
+    def __init__(self, port=None):
+        port = port or os.environ.get("ATS_MINI_PORT") or self._find_port()
+        self.s = serial.Serial(port, 115200, timeout=0.2)
+        time.sleep(0.3)
+        self.s.reset_input_buffer()
+        self.logging = False
+
+    @staticmethod
+    def _find_port():
+        ports = sorted(glob.glob("/dev/cu.usbmodem*"))
+        if not ports:
+            sys.exit("Rádio não encontrado na USB (/dev/cu.usbmodem*).")
+        return ports[0]
+
+    def send(self, data):
+        self.s.write(data.encode() if isinstance(data, str) else data)
+        self.s.flush()
+
+    def read_all(self, quiet=1.0, total=10.0):
+        """Lê até ficar `quiet` segundos sem dados (ou `total` segundos)."""
+        buf, last, start = b"", time.time(), time.time()
+        while time.time() - last < quiet and time.time() - start < total:
+            chunk = self.s.read(4096)
+            if chunk:
+                buf += chunk
+                last = time.time()
+        return buf
+
+    # --- monitor (log) ---
+    def log_on(self):
+        if not self.logging:
+            self.s.reset_input_buffer()
+            self.send("t")
+            self.logging = True
+            if self.status(timeout=4) is None:
+                self.send("t")  # talvez já estivesse ligado e acabamos de desligar
+                if self.status(timeout=4) is None:
+                    self.logging = False
+                    sys.exit("O rádio não respondeu. Ative Settings -> USB Port -> Ad hoc.")
+
+    def log_off(self):
+        if self.logging:
+            self.send("t")
+            self.logging = False
+            time.sleep(0.3)
+            self.s.reset_input_buffer()
+
+    def status(self, timeout=3.0):
+        """Próxima linha de status do monitor, como dict (ou None)."""
+        end = time.time() + timeout
+        while time.time() < end:
+            line = self.s.readline().decode(errors="replace").strip()
+            f = line.split(",")
+            if len(f) == 15 and f[0].isdigit() and f[4] in BAND_NAMES:
+                mode = f[5]
+                freq = int(f[1])
+                hz = freq * 10_000 if mode == "FM" else freq * 1_000 + int(f[2])
+                return {
+                    "fw": f"v{int(f[0]) / 100:.2f}", "hz": hz, "band": f[4],
+                    "mode": mode, "volume": int(f[9]), "rssi": int(f[10]),
+                    "snr": int(f[11]),
+                    # firmwares antigos mandam leitura do ADC; os novos já mandam volts
+                    "volts": float(f[13]) if "." in f[13] else int(f[13]) * 1.702 / 1000,
+                }
+        return None
+
+    def wait_for(self, pred, timeout=4.0):
+        end = time.time() + timeout
+        while time.time() < end:
+            st = self.status(timeout=end - time.time())
+            if st and pred(st):
+                return st
+        return None
+
+    # --- sintonia ---
+    def goto_band(self, name):
+        st = self.status()
+        for _ in range(40):  # o rádio tem ~29 bandas (inclui as de radioamador)
+            if st and st["band"] == name:
+                return st
+            self.send("B")
+            st = self.wait_for(lambda s, prev=st: prev is None or s["band"] != prev["band"])
+        sys.exit(f"Não consegui mudar para a banda {name}.")
+
+    def tune(self, hz, settle=0.0, want=None):
+        name, _, _, mode = band_for(hz // 1000, want)
+        st = self.status()
+        if not st or not (band_for_name(st["band"])[1] * 1000 <= hz <= band_for_name(st["band"])[2] * 1000) \
+                or (mode == "FM") != (st["mode"] == "FM") or (st["mode"] in SSB) != (mode in SSB):
+            self.goto_band(name)
+        self.send(f"F{hz}\r")
+        target = hz // 10_000 if mode == "FM" else hz // 1000
+        st = self.wait_for(lambda s: (s["hz"] // 10_000 if s["mode"] == "FM" else s["hz"] // 1000) == target)
+        if settle:
+            time.sleep(settle)
+            self.s.reset_input_buffer()
+            st = self.status() or st
+        return st
+
+
+def band_for_name(name):
+    # nomes repetidos (15M): para a sintonia vale a primeira, que é a de radiodifusão
+    return next(b for b in BANDS if b[0] == name)
+
+
+def fmt_freq(hz, mode):
+    return f"{hz / 1e6:.1f} MHz" if mode == "FM" else f"{hz / 1e3:.0f} kHz"
+
+
+def print_status(st):
+    print(f"{fmt_freq(st['hz'], st['mode']):>12}  {st['band']:<4} {st['mode']:<3} "
+          f"RSSI {st['rssi']:>3} dBµV  SNR {st['snr']:>3} dB  vol {st['volume']:>2}  "
+          f"bat {st['volts']:.2f} V  fw {st['fw']}")
+
+
+# --- comandos ---
+def cmd_status(r, args):
+    r.log_on()
+    print_status(r.status())
+    r.log_off()
+
+
+def cmd_monitor(r, args):
+    r.log_on()
+    try:
+        while True:
+            st = r.status()
+            if st:
+                print_status(st)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        r.log_off()
+
+
+def cmd_tune(r, args):
+    if not args:
+        sys.exit("Uso: ats-mini tune 89.1 | 840k")
+    r.log_on()
+    want = args[1].upper() if len(args) > 1 else None
+    st = r.tune(parse_freq(args[0]), settle=1.0, want=want)
+    if st:
+        print_status(st)
+    r.log_off()
+
+
+def read_mem(r):
+    r.s.reset_input_buffer()
+    r.send("$")
+    rows = []
+    for line in r.read_all(quiet=1.0).decode(errors="replace").splitlines():
+        line = line.strip()
+        if line.startswith("#"):
+            p = line[1:].split(",", 4)
+            rows.append([p[0], p[1], p[2], p[3], p[4] if len(p) > 4 else ""])
+    return rows
+
+
+def cmd_mem_dump(r, args):
+    rows = read_mem(r)
+    out = open(args[0], "w", newline="") if args else sys.stdout
+    w = csv.writer(out)
+    w.writerow(["slot", "band", "freq_hz", "mode", "name"])
+    w.writerows(rows)
+    if args:
+        out.close()
+        print(f"{len(rows)} memórias salvas em {args[0]}", file=sys.stderr)
+
+
+def clean_name(name):
+    name = "".join(c for c in name if 32 <= ord(c) < 127 and c != ",")
+    return name[:9]
+
+
+def cmd_mem_load(r, args):
+    if not args:
+        sys.exit("Uso: ats-mini mem-load arquivo.csv")
+    with open(args[0], newline="") as f:
+        rows = list(csv.DictReader(f))
+    if len(rows) > 99:
+        sys.exit(f"O rádio tem 99 memórias; o arquivo tem {len(rows)} linhas.")
+    for i, row in enumerate(rows, 1):
+        slot = int(row.get("slot") or i)
+        hz = int(row["freq_hz"])
+        mode = row.get("mode") or band_for(hz // 1000)[3]
+        band = row.get("band") or band_for(hz // 1000, mode)[0]
+        cmd = f"#{slot:02d},{band},{hz},{mode},{clean_name(row.get('name', ''))}\r"
+        r.send(cmd)
+        time.sleep(0.15)
+        print(cmd.strip())
+    r.read_all(quiet=1.5)  # descarta as respostas dos comandos # antes de conferir
+    print(f"{len(read_mem(r))} memórias no rádio agora.", file=sys.stderr)
+
+
+def cmd_mem_clear(r, args):
+    for slot in range(1, 100):
+        r.send(f"#{slot:02d},VHF,0,FM\r")
+        time.sleep(0.08)
+    print("Memórias apagadas.", file=sys.stderr)
+
+
+def scan(r, freqs, out_path, settle, min_rssi_show):
+    r.log_on()
+    results = []
+    try:
+        for i, hz in enumerate(freqs):
+            st = r.tune(hz, settle=settle)
+            if not st:
+                continue
+            # média de 2 leituras para reduzir ruído
+            st2 = r.status() or st
+            rssi, snr = (st["rssi"] + st2["rssi"]) / 2, (st["snr"] + st2["snr"]) / 2
+            results.append((hz, st["mode"], rssi, snr))
+            bar = "#" * int(rssi / 2)
+            print(f"\r[{i + 1}/{len(freqs)}] {fmt_freq(hz, st['mode']):>12} RSSI {rssi:5.1f} SNR {snr:5.1f} {bar:<40}",
+                  end="", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("\nInterrompido.", file=sys.stderr)
+    finally:
+        r.log_off()
+    print(file=sys.stderr)
+    with open(out_path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["freq_hz", "mode", "rssi_dbuv", "snr_db"])
+        w.writerows(results)
+    good = sorted((x for x in results if x[3] >= min_rssi_show), key=lambda x: x[0])
+    print(f"\nCanais com SNR >= {min_rssi_show} dB ({len(good)}):")
+    for hz, mode, rssi, snr in good:
+        print(f"  {fmt_freq(hz, mode):>12}  RSSI {rssi:5.1f}  SNR {snr:5.1f}")
+    print(f"\nResultado completo: {out_path}")
+
+
+def cmd_scan_fm(r, args):
+    # Brasil: canais FM em décimos ímpares; inclui FM estendido (76.1–87.7)
+    freqs = [int(round(f * 100)) * 10_000 for f in [x / 10 for x in range(761, 1080, 2)]]
+    scan(r, freqs, args[0] if args else "scan-fm.csv", settle=0.35, min_rssi_show=8)
+
+
+def cmd_scan_am(r, args):
+    freqs = [k * 1000 for k in range(530, 1701, 10)]
+    scan(r, freqs, args[0] if args else "scan-am.csv", settle=0.6, min_rssi_show=6)
+
+
+def cmd_scan_sw(r, args):
+    ranges = [(2300, 2495), (3200, 3400), (3900, 4000), (4750, 5060), (5900, 6200),
+              (7200, 7450), (9400, 9900), (11600, 12100), (13570, 13870),
+              (15100, 15800), (17480, 17900), (21450, 21850), (25670, 26100)]
+    freqs = [k * 1000 for a, b in ranges for k in range(a, b + 1, 5)]
+    scan(r, freqs, args[0] if args else "scan-sw.csv", settle=0.6, min_rssi_show=6)
+
+
+def cmd_scan(r, args):
+    if len(args) < 3:
+        sys.exit("Uso: ats-mini scan INICIO FIM PASSO [saida.csv]   (ex.: scan 3000k 3500k 5k)")
+    start, end, step = (parse_freq(a) for a in args[:3])
+    freqs = list(range(start, end + 1, step))
+    scan(r, freqs, args[3] if len(args) > 3 else "scan.csv", settle=0.6, min_rssi_show=6)
+
+
+def cmd_intro(r, args):
+    r.send("Q")
+
+
+def cmd_info(r, args):
+    r.s.reset_input_buffer()
+    r.send("?")
+    sys.stdout.write(r.read_all(quiet=1.0).decode(errors="replace"))
+
+
+def cmd_eibi(r, args):
+    r.s.reset_input_buffer()
+    r.send("J")
+    print("Baixando a programação EiBi (cerca de 1–2 minutos)...", file=sys.stderr)
+    out, end = b"", time.time() + 600
+    while time.time() < end:
+        out += r.s.read(256)
+        tail = out.split(b"EiBi load:", 1)
+        if len(tail) == 2 and b"\n" in tail[1]:
+            break
+    sys.stdout.write(out.decode(errors="replace"))
+
+
+def cmd_screenshot(r, args):
+    out = args[0] if args else "ats-mini-tela.bmp"
+    r.s.reset_input_buffer()
+    r.send("c")
+    data = r.read_all(quiet=2.0, total=60)
+    if not data.startswith(b"BM"):
+        sys.exit("Screenshot falhou (o rádio respondeu algo inesperado).")
+    with open(out, "wb") as f:
+        f.write(data)
+    print(f"Tela salva em {out}")
+
+
+def cmd_send(r, args):
+    r.send(" ".join(args).replace("\\r", "\r"))
+    out = r.read_all(quiet=0.8)
+    if out:
+        sys.stdout.write(out.decode(errors="replace"))
+
+
+COMMANDS = {
+    "status": cmd_status, "monitor": cmd_monitor, "tune": cmd_tune,
+    "mem-dump": cmd_mem_dump, "mem-load": cmd_mem_load, "mem-clear": cmd_mem_clear,
+    "scan-fm": cmd_scan_fm, "scan-am": cmd_scan_am, "scan-sw": cmd_scan_sw, "scan": cmd_scan,
+    "intro": cmd_intro, "info": cmd_info, "eibi": cmd_eibi,
+    "screenshot": cmd_screenshot, "send": cmd_send,
+}
+
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        print(__doc__)
+        sys.exit(1)
+    COMMANDS[sys.argv[1]](Radio(), sys.argv[2:])
+
+
+if __name__ == "__main__":
+    main()

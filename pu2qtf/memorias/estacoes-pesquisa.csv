@@ -1,0 +1,96 @@
+category,freq_hz,mode,name9,full_name,notes,confidence
+FM,76700000,FM,ClassPan,Classic Pan (Jovem Pan),FM estendido; ex-AM 620 migrated (class E3),high
+FM,77100000,FM,Record,Radio Record,FM estendido; AM 1000 shut down 1 Mar 2026,high
+FM,77500000,FM,Capital,Radio Capital,FM estendido migrant (also AM 1040 Diadema),high
+FM,77900000,FM,CultBrasl,Radio Cultura Brasil,FM estendido (also AM 1200),high
+FM,79100000,FM,DaCidade,Radio DaCidade FM,FM estendido; was Top FM simulcast after 12 Mar 2026 swap - tudoradio now lists DaCidade FM,medium
+FM,79500000,FM,Radio SP,Radio Sao Paulo,FM estendido ZYS107,medium
+FM,79900000,FM,NDifusora,Radio Nova Difusora (Osasco),FM estendido ZYO231,medium
+FM,80700000,FM,SuperRad,Super Radio (Deus e Amor network),FM estendido migrant; also on 93.3,high
+FM,81900000,FM,ABC,Radio ABC (Santo Andre),FM estendido; ABC-region local migrant,high
+FM,82300000,FM,Paulistan,Radio Paulistana (Santa Isabel),FM estendido migrant,medium
+FM,83900000,FM,DaCidMogi,Radio DaCidade FM (Mogi das Cruzes),FM estendido migrant,medium
+FM,84300000,FM,BoaVontad,Super Rede Boa Vontade,FM estendido migrant,high
+FM,85500000,FM,BoaNova,Radio Boa Nova (Guarulhos),FM estendido migrant,medium
+FM,85900000,FM,CancaoNov,Radio Cancao Nova SP,FM estendido migrant,high
+FM,86300000,FM,Radio863,Radio 86.3 FM,Ex-Radio Bandeirantes (moved to 107.3 on 15 May 2026); ZYM673 listed but current programming unclear,low
+FM,87100000,FM,Nacional,Radio Nacional SP (EBC),ZYO212,high
+FM,88100000,FM,Gazeta,Gazeta FM,ZYD821; rebranded Mar 2026,high
+FM,88500000,FM,LaserFM,Radio Laser FM (Mogi das Cruzes),ZYM938,medium
+FM,88700000,FM,AD FM,Radio AD FM (Ibiuna),AM-FM migrant,medium
+FM,89100000,FM,89Rock,89 FM A Radio Rock,ZYD906,high
+FM,89700000,FM,NovaBras,Novabrasil FM,ZYD801,high
+FM,90100000,FM,Gospel,Radio Gospel FM (Jundiai/Serra do Japi),ZYM702,high
+FM,90500000,FM,CBN SP,CBN Sao Paulo,ZYD800; news,high
+FM,90900000,FM,VIP FM,VIP FM (Sao Bernardo do Campo),ZYM680; licensed in SBC; may simulcast Band content,high
+FM,91300000,FM,Disney,Radio Disney,ZYD849,high
+FM,91700000,FM,DaCidGRU,Radio DaCidade FM (Guarulhos),ex-AM migrant,medium
+FM,92100000,FM,Feliz FM,Feliz FM (Mogi das Cruzes),ZYD889,high
+FM,92500000,FM,Kiss FM,Kiss FM,ZYM946,high
+FM,92900000,FM,Massa FM,Massa FM,ZYD818,high
+FM,93300000,FM,SuperR933,Super Radio (Maua/Santos),ZYU943; Super Radio moved here 12 Mar 2026; Maua is ABC region,high
+FM,93700000,FM,USP FM,Radio USP FM,ZYD833,high
+FM,94100000,FM,Atual FM,Radio Atual FM,ZYU650,medium
+FM,94700000,FM,Antena1,Antena 1 SP,ZYD823,high
+FM,95300000,FM,Nativa,Nativa FM,ZYM682,high
+FM,95700000,FM,VibeMund,Radio Vibe Mundial (Jundiai),ZYD994,medium
+FM,96100000,FM,Band FM,Band FM,ZYD819,high
+FM,96500000,FM,Z FM,Radio Z FM,migrant class A4,medium
+FM,96900000,FM,BandNews,BandNews FM,ZYD854; news,high
+FM,97300000,FM,DeusAmor,Radio Deus e Amor (Mairipora),ZYD947,high
+FM,97700000,FM,Energia97,Energia 97 FM,ZYD907,high
+FM,98100000,FM,Terra FM,Radio Terra FM (Aruja),AM-FM migrant,medium
+FM,98500000,FM,Metropol,Metropolitana FM,ZYD891,high
+FM,98900000,FM,BrDeFato,Radio Brasil de Fato (Mogi das Cruzes),ZYW663,medium
+FM,99100000,FM,DaCidItpv,Radio DaCidade FM (Itapevi),AM-FM migrant,medium
+FM,99500000,FM,Aleluia,Rede Aleluia,ZYD900,high
+FM,99700000,FM,SaudadeFM,Saudade FM (Santos),ZYM717; fair signal in SBC/ABC only,medium
+FM,100100000,FM,TMC,TMC (ex-Transamerica SP),ZYD803 202 kW ERP,high
+FM,100500000,FM,DeusAmorJ,Radio Deus e Amor (Jacarei),ZYD890; good signal,medium
+FM,100900000,FM,JovemPan,Jovem Pan FM,ZYD825,high
+FM,101300000,FM,SaraBras,Sara Brasil FM (Juquitiba),ZYW612,medium
+FM,101500000,FM,FM1015,101.5 FM (Salesopolis),ZYM836,low
+FM,101700000,FM,Alpha FM,Alpha FM,ZYD955,high
+FM,102100000,FM,Top FM,Top FM (Aruja),ZYM681,high
+FM,102500000,FM,Imprensa,Radio Imprensa FM,ZYD877,medium
+FM,102900000,FM,Mais FM,Mais FM (Jundiai),ZYM934; not listed in tudoradio SBC dial - may be weak in ABC,medium
+FM,103300000,FM,CulturaFM,Radio Cultura FM,ZYD820; classical,high
+FM,103700000,FM,HitsFM,103.7 Hits FM (Cubatao/Santo Andre),ZYM697; ABC coverage,medium
+FM,104100000,FM,Estilo FM,Estilo FM,ZYD871; moved here 12 Mar 2026,high
+FM,104300000,FM,Dumont,Dumont FM (Jundiai),ZYD898,high
+FM,104700000,FM,Transcont,Transcontinental FM,ZYD808,high
+FM,105100000,FM,105 FM,Radio 105 FM (Jundiai),ZYD863,high
+FM,105700000,FM,Forbes,Forbes Radio,ZYD930; launched 7 Feb 2026,high
+FM,106300000,FM,Mix FM,Radio Mix FM,ZYM688,high
+FM,106900000,FM,Omega FM,Omega FM (Mogi das Cruzes),ZYM663,medium
+FM,107300000,FM,Bandeirnt,Radio Bandeirantes,On 107.3 since 15 May 2026 (left 86.3); news/sports,high
+FM,107900000,FM,Eldorado,Radio Eldorado (Porto),Relaunched on 107.9 on 7 Oct 2026,high
+AM,700000,AM,NossaRad,Nossa Radio (Sao Caetano do Sul),ABC-region local AM,medium
+AM,740000,AM,Trianon,Radio Trianon,Sao Paulo,medium
+AM,920000,AM,AM920,AM 920 (Cotia),ZYK775,medium
+AM,1040000,AM,CapitalAM,Radio Capital (Diadema),Class A; also on FM 77.5,medium
+AM,1070000,AM,Metr1070,Radio Metropolitana (Mogi das Cruzes),Class B,medium
+AM,1200000,AM,CultBrAM,Radio Cultura Brasil AM,Also on FM 77.9,medium
+AM,1300000,AM,DeusAmrAM,Radio Deus e Amor AM,Sao Paulo,medium
+AM,1490000,AM,Imaculada,Radio Imaculada (Santo Andre),ABC-region local AM,medium
+AM,1600000,AM,9Julho,Radio 9 de Julho,Catholic; Sao Paulo,medium
+AM,820000,AM,Aparecida,Radio Aparecida (Aparecida SP),Night skywave/groundwave ~170 km; 2026 AM status not confirmed,low
+AM,980000,AM,NacBSB,Radio Nacional Brasilia (EBC),Distant; night only; listed by EBC Sep 2026,medium
+AM,1130000,AM,NacRio,Radio Nacional Rio (EBC),Distant; night only; listed by EBC Sep 2026,medium
+SW,11780000,AM,NacAmaz,Radio Nacional da Amazonia (Brasilia),Portuguese; Mo-Fr 0745-2000 / Sa-Su 0900-1800 UTC; best daytime Brazilian SW,high
+SW,6180000,AM,NacAmz49,Radio Nacional da Amazonia (Brasilia),Portuguese; Mo-Fr 2000-2400 + Tu-Sa 0000-0300 UTC,medium
+SW,11815000,AM,BrCentral,Radio Brasil Central (Goiania),Portuguese; listed 24h (EiBi A26),medium
+SW,6010000,AM,Inconfid,Radio Inconfidencia (Belo Horizonte),Portuguese; 24h; actual 6010.1 kHz,medium
+SW,15190000,AM,Inconf19,Radio Inconfidencia (Belo Horizonte),Portuguese; 24h listed; daytime band,medium
+SW,5940000,AM,VozMiss,Radio Voz Missionaria (Camboriu SC),Portuguese religious; 24h; actual 5940.1 kHz,medium
+SW,11750000,AM,VozMiss25,Radio Voz Missionaria (Camboriu SC),Portuguese religious; 24h; actual 11750.3 kHz,medium
+SW,5035000,AM,EduRural,Radio Educacao Rural (Coari AM),Portuguese; 1000-2345 UTC; distant - night only,low
+SW,11760000,AM,HabanaCub,Radio Habana Cuba,Spanish most hours; Portuguese 0200-0230 & 0430-0500; English 0000-0100/0231-0331/1900-2000 UTC,medium
+SW,17715000,AM,ExtEspana,Radio Exterior de Espana (Noblejas),Spanish to SAm; winter sked Tu-Sa 0000-0300 / Mo-Fr 1900-2300 / Sa-Su 1500-2300 UTC,medium
+SW,9955000,AM,WRMI9955,WRMI Radio Miami Int.,English; 2100-0200 UTC; also Radio Prague/Slovakia relays 0200-0400,medium
+SW,9455000,AM,WRMI9455,WRMI Radio Miami Int.,English 2300-0400 UTC; RAE Argentina Portuguese relay irregular 2300-2400,medium
+SW,6050000,AM,HCJB,HCJB Voz de los Andes (Ecuador),Spanish/Quechua; ~2100-0500 & 0923-1403 UTC; weak path,low
+SW,9765000,AM,PalAlegre,MWV Palavra Alegre (Madagascar),Portuguese to SAm; 2100-2300 UTC,medium
+SW,11795000,AM,KBS World,KBS World Radio (Korea),Spanish to SAm 1100-1200 UTC,medium
+SW,9685000,AM,CRI Port,China Radio International,Portuguese to SAm 2200-2300 UTC per A26 - B26 frequency may differ,low
+SW,9630000,AM,AparecSW,Radio Aparecida SW,Not listed in EiBi A26 - possibly off air; try 6135/11855 too,low

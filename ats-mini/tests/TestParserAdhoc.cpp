@@ -32,6 +32,7 @@ static void testSingleByteCommands() {
     {'C', AdhocId::CaptureScreen}, {'c', AdhocId::CaptureScreenBinary},
     {'t', AdhocId::ToggleLog}, {'$', AdhocId::GetMemories},
     {'T', AdhocId::ToggleThemeEditor}, {'@', AdhocId::GetTheme},
+    {'Q', AdhocId::PlayIntro}, {'?', AdhocId::GetInfo}, {'J', AdhocId::LoadEibi},
   };
   FramerState state;
   ByteSpan frame;
@@ -42,7 +43,7 @@ static void testSingleByteCommands() {
     assert(parseAdhoc(frame, command) == ParseResult::Ready);
     assert(command.id == expected.id);
   }
-  assert(parseAdhoc(bytes("?"), command) == ParseResult::UnknownCommand);
+  assert(parseAdhoc(bytes("~"), command) == ParseResult::UnknownCommand);
   assert(parseAdhoc(bytes("RR"), command) == ParseResult::InvalidSyntax);
   assert(parseAdhoc(bytes(""), command) == ParseResult::InvalidSyntax);
   assert(parseAdhoc(bytes("\r"), command) == ParseResult::None);

@@ -112,6 +112,9 @@ ParseResult parseAdhoc(ByteSpan frame, AdhocCommand& out) {
     case '$': out.id = Id::GetMemories; break;
     case 'T': out.id = Id::ToggleThemeEditor; break;
     case '@': out.id = Id::GetTheme; break;
+    case 'Q': out.id = Id::PlayIntro; break;
+    case '?': out.id = Id::GetInfo; break;
+    case 'J': out.id = Id::LoadEibi; break;
     case '\r': case '\n': return ParseResult::None;
     default: return ParseResult::UnknownCommand;
   }

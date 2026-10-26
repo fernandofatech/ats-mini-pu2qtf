@@ -7,6 +7,7 @@
 #include "Rotary.h"
 #include "Button.h"
 #include "Menu.h"
+#include "Intro.h"
 #include "Memories.h"
 #include "Patches.h"
 #include "Draw.h"
@@ -245,6 +246,9 @@ void setup()
   if(PIN_AMP_EN >= 0) digitalWrite(PIN_AMP_EN, HIGH);
 
   patchesInit();
+
+  // PU2QTF: CQ in CW on an animated screen (click to skip)
+  introPlay();
 
   // SI4732 STARTUP!
   initVfo();

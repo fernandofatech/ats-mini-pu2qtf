@@ -130,6 +130,9 @@ The ad hoc protocol is the main remote-control protocol. It can be used over:
 | <kbd>T</kbd> | Theme Editor        | Toggle the [theme editor](development.md#theme-editor) on and off                                |
 | <kbd>@</kbd> | Get Theme           | Print the current color theme                                                                    |
 | <kbd>^</kbd> | Set Theme           | Set the current color theme as a list of HEX numbers (effective until a power cycle)             |
+| <kbd>Q</kbd> | Play Intro          | Play the PU2QTF startup screen again                                                             |
+| <kbd>?</kbd> | Show Info           | Show the clock and EiBi schedule status, including the result of the last EiBi download         |
+| <kbd>J</kbd> | Load EiBi           | Download the EiBi schedule over Wi-Fi and print the result                                       |
 
 Memory names can contain up to 9 printable ASCII characters. Omit the name field to keep the existing name, or append a comma with no name to clear it (for example, `#01,VHF,107900000,FM,`). The `$` command includes non-empty names in its output.
 
