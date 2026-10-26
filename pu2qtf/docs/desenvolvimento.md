@@ -121,9 +121,13 @@ for v in qspi ospi; do
   cp ats-mini/build/$v/ats-mini.ino.bin dist/ats-mini-$V-$v-ota.bin
   (cd dist && zip -qr ats-mini-$V-$v.zip ats-mini-$V-$v)
 done
-git tag -f $V && git push -f origin $V
+git tag $V && git push origin $V        # só se a tag ainda não existir no fork
 gh release create $V dist/*.zip dist/*-ota.bin --title "$V PU2QTF" --notes "..."
 ```
+
+Não envie as tags oficiais (`git push --tags`) para o fork: assim a tag `vX.YY` de cada
+versão nova é criada no commit da edição. A `v2.45` é exceção: ela veio junto com o fork e
+aponta para o commit oficial, mas os binários da release foram compilados do `main` da edição.
 
 O GitHub Actions oficial (`.github/workflows/build.yml`) também compila tudo. Em forks ele
 vem desligado: ative em *Actions* no GitHub se quiser builds automáticos a cada push.
